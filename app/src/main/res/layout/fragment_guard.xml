@@ -2,16 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/guard_root"
+    android:id="@+id/rootGuard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/guard_bg"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:background="#05060A"
+    android:padding="16dp">
 
-    <!-- HEADER -->
+    <!-- Header -->
     <LinearLayout
-        android:id="@+id/guardHeaderContainer"
+        android:id="@+id/headerContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -25,197 +24,177 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Guard"
-            android:textColor="@color/guard_text"
-            android:textSize="22sp"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvGuardSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start a new protection session or review what Guard has already checked."
-            android:textColor="@color/guard_subtle"
-            android:textSize="14sp"
-            android:layout_marginTop="6dp" />
-    </LinearLayout>
-
-    <!-- QUICK LINKS CARD -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardQuickLinks"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardBackgroundColor="#020617"
-        app:cardCornerRadius="18dp"
-        app:cardElevation="4dp"
-        app:strokeColor="#111827"
-        app:strokeWidth="1dp"
-        app:layout_constraintTop_toBottomOf="@id/guardHeaderContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="12dp">
-
-            <!-- Lock -->
-            <LinearLayout
-                android:id="@+id/quickLock"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@android:drawable/ic_lock_lock" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lock"
-                    android:textColor="@color/guard_text"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Copilot -->
-            <LinearLayout
-                android:id="@+id/quickCopilot"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@android:drawable/ic_menu_info_details" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Copilot"
-                    android:textColor="@color/guard_text"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Profile -->
-            <LinearLayout
-                android:id="@+id/quickProfile"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@android:drawable/ic_menu_myplaces" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Profile"
-                    android:textColor="@color/guard_text"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- SESSIONS HEADER -->
-    <LinearLayout
-        android:id="@+id/sessionsHeaderContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/cardQuickLinks"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/tvSessionsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sessions"
-            android:textColor="@color/guard_text"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvSessionsSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guard tracks each call, screen, or link you ask it to watch."
-            android:textColor="@color/guard_subtle"
-            android:textSize="13sp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:text="Your AI bodyguard for calls, screens and links."
+            android:textColor="#8C90A1"
+            android:textSize="14sp" />
     </LinearLayout>
 
-    <!-- ACTIONS + LIST -->
+    <!-- Quick links row -->
     <LinearLayout
-        android:id="@+id/sessionsActionsContainer"
+        android:id="@+id/quickLinksRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Lock -->
+        <LinearLayout
+            android:id="@+id/quickLock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="#10131B"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <TextView
+                android:id="@+id/tvQuickLock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lock"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Club mode"
+                android:textColor="#8C90A1"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Copilot -->
+        <LinearLayout
+            android:id="@+id/quickCopilot"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:background="#10131B"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <TextView
+                android:id="@+id/tvQuickCopilot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Copilot"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="AI help"
+                android:textColor="#8C90A1"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Profile -->
+        <LinearLayout
+            android:id="@+id/quickProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="#10131B"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <TextView
+                android:id="@+id/tvQuickProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profile"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Sessions, settings"
+                android:textColor="#8C90A1"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Sessions label -->
+    <TextView
+        android:id="@+id/tvSessionsLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Guard sessions"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/quickLinksRow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Sessions list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSessions"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintTop_toBottomOf="@id/sessionsHeaderContainer"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
+        app:layout_constraintTop_toBottomOf="@id/tvSessionsLabel"
+        app:layout_constraintBottom_toTopOf="@id/btnAddSession"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Add session button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAddSession"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add new session"
-            android:textAllCaps="false"
-            android:textSize="15sp"
-            android:backgroundTint="@color/guard_green"
-            android:textColor="#022C22"
-            app:cornerRadius="18dp"
-            app:icon="@android:drawable/ic_input_add"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp" />
-
-        <!-- Empty state text (show/hide from code) -->
-        <TextView
-            android:id="@+id/tvNoSessions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No sessions yet. Start by adding a new session."
-            android:textColor="@color/guard_subtle"
-            android:textSize="13sp"
-            android:gravity="center"
-            android:layout_marginTop="12dp"
-            android:visibility="gone" />
-
-        <!-- Sessions list -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerSessions"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="12dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingBottom="8dp" />
-
-    </LinearLayout>
+    <!-- Add session button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddSession"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Start a new Guard session"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:backgroundTint="#22F58A"
+        android:textColor="#05060A"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

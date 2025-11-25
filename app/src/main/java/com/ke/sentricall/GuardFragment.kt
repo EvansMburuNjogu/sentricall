@@ -1,3 +1,4 @@
+// app/src/main/java/com/ke/sentricall/GuardFragment.kt
 package com.ke.sentricall
 
 import android.os.Bundle
@@ -5,38 +6,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.card.MaterialCardView
 
-/**
- * Guard screen:
- * - Quick links: Lock, Copilot, Profile
- * - "Add new session" button → choose session type
- * - Sessions list shown inline
- */
-class GuardFragment : Fragment() {
+class GuardFragment : Fragment(), SessionTypeDialogFragment.OnSessionTypeSelectedListener {
 
     private lateinit var tvGuardTitle: TextView
     private lateinit var tvGuardSubtitle: TextView
 
-    // Quick links
-    private lateinit var quickLock: LinearLayout
-    private lateinit var quickCopilot: LinearLayout
-    private lateinit var quickProfile: LinearLayout
+    private lateinit var cardQuickLock: MaterialCardView
+    private lateinit var cardQuickCopilot: MaterialCardView
+    private lateinit var cardQuickProfile: MaterialCardView
 
-    // Sessions UI
     private lateinit var btnAddSession: MaterialButton
-    private lateinit var tvNoSessions: TextView
     private lateinit var recyclerSessions: RecyclerView
+    private lateinit var tvEmptySessions: TextView
 
-    private lateinit var sessionsAdapter: GuardSessionsAdapter
-    private val sessions: MutableList<GuardSession> = mutableListOf()
+    private val sessions = mutableListOf<GuardSession>()
+    private lateinit var adapter: GuardSessionAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // You can preload sessions from DB here later
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,194 +46,119 @@ class GuardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Header
         tvGuardTitle = view.findViewById(R.id.tvGuardTitle)
         tvGuardSubtitle = view.findViewById(R.id.tvGuardSubtitle)
 
-        // Quick links
-        quickLock = view.findViewById(R.id.quickLock)
-        quickCopilot = view.findViewById(R.id.quickCopilot)
-        quickProfile = view.findViewById(R.id.quickProfile)
+        cardQuickLock = view.findViewById(R.id.cardQuickLock)
+        cardQuickCopilot = view.findViewById(R.id.cardQuickCopilot)
+        cardQuickProfile = view.findViewById(R.id.cardQuickProfile)
 
-        // Sessions
         btnAddSession = view.findViewById(R.id.btnAddSession)
-        tvNoSessions = view.findViewById(R.id.tvNoSessions)
         recyclerSessions = view.findViewById(R.id.recyclerSessions)
+        tvEmptySessions = view.findViewById(R.id.tvEmptySessions)
 
-        setupQuickLinks()
-        setupSessionsList()
-        setupAddSessionButton()
+        // Header
+        tvGuardTitle.text = "Guard"
+        tvGuardSubtitle.text = "Create AI-powered sessions to listen, watch, or review suspicious activity."
 
-        // For now you can load mock sessions or leave empty
-        loadInitialSessions()
-        updateSessionsVisibility()
-    }
-
-    private fun setupQuickLinks() {
-        quickLock.setOnClickListener {
-            // Later: navigate to Lock tab / LockFragment
-            Toast.makeText(requireContext(), "Open Lock screen", Toast.LENGTH_SHORT).show()
+        // Quick link actions (for now just show toasts – we can wire real nav later)
+        cardQuickLock.setOnClickListener {
+            Toast.makeText(requireContext(), "Opening Lock screen…", Toast.LENGTH_SHORT).show()
+            // TODO: navigate to Lock tab / fragment if you want
         }
 
-        quickCopilot.setOnClickListener {
-            // Later: navigate to AI Copilot screen
-            Toast.makeText(requireContext(), "Open Guard Copilot", Toast.LENGTH_SHORT).show()
+        cardQuickCopilot.setOnClickListener {
+            Toast.makeText(requireContext(), "Guard Copilot coming soon.", Toast.LENGTH_SHORT).show()
         }
 
-        quickProfile.setOnClickListener {
-            // Later: navigate to profile/settings
-            Toast.makeText(requireContext(), "Open Profile", Toast.LENGTH_SHORT).show()
+        cardQuickProfile.setOnClickListener {
+            Toast.makeText(requireContext(), "Profile & settings coming soon.", Toast.LENGTH_SHORT).show()
         }
-    }
 
-    private fun setupSessionsList() {
+        // Sessions list
+        adapter = GuardSessionAdapter(sessions) { session ->
+            openSessionDetail(session)
+        }
         recyclerSessions.layoutManager = LinearLayoutManager(requireContext())
-        sessionsAdapter = GuardSessionsAdapter(
-            items = sessions,
-            onSessionClick = { session ->
-                // Later: open detailed session screen
-                Toast.makeText(
-                    requireContext(),
-                    "Open session: ${session.title}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
-        recyclerSessions.adapter = sessionsAdapter
-    }
+        recyclerSessions.adapter = adapter
 
-    private fun setupAddSessionButton() {
+        updateEmptyState()
+
         btnAddSession.setOnClickListener {
             showSessionTypeDialog()
         }
     }
 
     private fun showSessionTypeDialog() {
-        val sessionTypes = arrayOf(
-            "Listen to Audio",
-            "Record Screen",
-            "Upload Audio / Image",
-            "Website Link"
-        )
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Start new session")
-            .setItems(sessionTypes) { _, which ->
-                val type = when (which) {
-                    0 -> SessionType.LISTEN_AUDIO
-                    1 -> SessionType.RECORD_SCREEN
-                    2 -> SessionType.UPLOAD_MEDIA
-                    3 -> SessionType.WEBSITE_LINK
-                    else -> SessionType.LISTEN_AUDIO
-                }
-
-                // For now we create a dummy session & add it to the list.
-                // Later you can redirect to a dedicated Session screen.
-                createNewSession(type)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        val dialog = SessionTypeDialogFragment.newInstance()
+        dialog.setTargetFragment(this, 0) // deprecated but simple; fine for now
+        dialog.show(parentFragmentManager, "SessionTypeDialog")
     }
 
-    private fun createNewSession(type: SessionType) {
+    override fun onSessionTypeSelected(type: SessionType) {
+        // Create a new in-memory session. Later you can persist to Room.
         val newSession = GuardSession(
             id = System.currentTimeMillis(),
             type = type,
             title = when (type) {
-                SessionType.LISTEN_AUDIO -> "Listen to Audio"
-                SessionType.RECORD_SCREEN -> "Record Screen"
-                SessionType.UPLOAD_MEDIA -> "Upload Audio / Image"
-                SessionType.WEBSITE_LINK -> "Website Link"
+                SessionType.LISTEN_AUDIO -> "Listening session"
+                SessionType.RECORD_SCREEN -> "Screen watch"
+                SessionType.UPLOAD_MEDIA -> "Uploaded media review"
+                SessionType.WEBSITE_LINK -> "Website scan"
             },
-            timeLabel = "Just now",
-            riskLabel = "Pending",
-            riskLevel = RiskLevel.UNKNOWN,
-            shortSummary = "Guard will analyze this session once started."
+            summary = "New ${type.displayName} session. AI will analyse activity and flag risks."
         )
 
         sessions.add(0, newSession)
-        sessionsAdapter.notifyItemInserted(0)
+        adapter.notifyItemInserted(0)
         recyclerSessions.scrollToPosition(0)
-        updateSessionsVisibility()
+        updateEmptyState()
+
+        openSessionDetail(newSession)
     }
 
-    private fun loadInitialSessions() {
-        // Optional: mock a couple of previous sessions so UI doesn't look empty
-        // You can remove this and load from Room later.
-        // sessions.add(
-        //     GuardSession(
-        //         id = 1L,
-        //         type = SessionType.LISTEN_AUDIO,
-        //         title = "Safaricom call",
-        //         timeLabel = "Today, 10:32",
-        //         riskLabel = "Low risk",
-        //         riskLevel = RiskLevel.LOW,
-        //         shortSummary = "Guard found no suspicious phrases in this audio."
-        //     )
-        // )
-        // sessionsAdapter.notifyDataSetChanged()
-    }
-
-    private fun updateSessionsVisibility() {
+    private fun updateEmptyState() {
         if (sessions.isEmpty()) {
-            tvNoSessions.visibility = View.VISIBLE
+            tvEmptySessions.visibility = View.VISIBLE
             recyclerSessions.visibility = View.GONE
         } else {
-            tvNoSessions.visibility = View.GONE
+            tvEmptySessions.visibility = View.GONE
             recyclerSessions.visibility = View.VISIBLE
         }
+    }
+
+    private fun openSessionDetail(session: GuardSession) {
+        // For now just toast – later navigate to the dedicated session screen.
+        Toast.makeText(
+            requireContext(),
+            "Open session: ${session.title} (${session.type.displayName})",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }
 
 /**
- * Domain model for a Guard session.
+ * Simple in-memory model for Guard sessions.
  */
 data class GuardSession(
     val id: Long,
     val type: SessionType,
     val title: String,
-    val timeLabel: String,
-    val riskLabel: String,
-    val riskLevel: RiskLevel,
-    val shortSummary: String
+    val summary: String
 )
 
-enum class SessionType {
-    LISTEN_AUDIO,
-    RECORD_SCREEN,
-    UPLOAD_MEDIA,
-    WEBSITE_LINK
-}
-
-enum class RiskLevel {
-    LOW,
-    MEDIUM,
-    HIGH,
-    UNKNOWN
-}
-
 /**
- * Simple RecyclerView adapter for sessions list.
+ * RecyclerView adapter for sessions.
  */
-class GuardSessionsAdapter(
+class GuardSessionAdapter(
     private val items: MutableList<GuardSession>,
-    private val onSessionClick: (GuardSession) -> Unit
-) : RecyclerView.Adapter<GuardSessionsAdapter.SessionViewHolder>() {
+    private val onClick: (GuardSession) -> Unit
+) : RecyclerView.Adapter<GuardSessionAdapter.SessionViewHolder>() {
 
     inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvType: TextView = itemView.findViewById(R.id.tvSessionType)
-        val tvTime: TextView = itemView.findViewById(R.id.tvSessionTime)
-        val tvRisk: TextView = itemView.findViewById(R.id.tvSessionRisk)
-        val tvSummary: TextView = itemView.findViewById(R.id.tvSessionSummary)
-
-        init {
-            itemView.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onSessionClick(items[position])
-                }
-            }
-        }
+        val icon: ImageView = itemView.findViewById(R.id.ivSessionIcon)
+        val title: TextView = itemView.findViewById(R.id.tvSessionTitle)
+        val subtitle: TextView = itemView.findViewById(R.id.tvSessionSubtitle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
@@ -245,29 +167,23 @@ class GuardSessionsAdapter(
         return SessionViewHolder(view)
     }
 
+    override fun getItemCount(): Int = items.size
+
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val item = items[position]
-        holder.tvType.text = item.title
-        holder.tvTime.text = item.timeLabel
-        holder.tvSummary.text = item.shortSummary
+        holder.title.text = item.title
+        holder.subtitle.text = item.summary
 
-        // Risk pill text + color (you already have background drawables)
-        holder.tvRisk.text = item.riskLabel
-        when (item.riskLevel) {
-            RiskLevel.LOW -> {
-                holder.tvRisk.setTextColor(0xFF16A34A.toInt()) // green-ish
-            }
-            RiskLevel.MEDIUM -> {
-                holder.tvRisk.setTextColor(0xFFEAB308.toInt()) // yellow-ish
-            }
-            RiskLevel.HIGH -> {
-                holder.tvRisk.setTextColor(0xFFEF4444.toInt()) // red-ish
-            }
-            RiskLevel.UNKNOWN -> {
-                holder.tvRisk.setTextColor(0xFF9CA3AF.toInt()) // grey
-            }
+        val iconRes = when (item.type) {
+            SessionType.LISTEN_AUDIO -> R.drawable.ic_guard_mic
+            SessionType.RECORD_SCREEN -> R.drawable.ic_guard_screen
+            SessionType.UPLOAD_MEDIA -> R.drawable.ic_guard_upload
+            SessionType.WEBSITE_LINK -> R.drawable.ic_guard_link
+        }
+        holder.icon.setImageResource(iconRes)
+
+        holder.itemView.setOnClickListener {
+            onClick(item)
         }
     }
-
-    override fun getItemCount(): Int = items.size
 }
