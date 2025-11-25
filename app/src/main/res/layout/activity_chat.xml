@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chat_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/guard_bg"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp"
+    android:paddingTop="55dp">
+
+    <!-- TOP BAR WITH BACK BUTTON + TITLE + EDIT -->
+    <LinearLayout
+        android:id="@+id/chatAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:tint="@android:color/white"
+            android:contentDescription="Back" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/tvChatTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Copilot chat"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvChatSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ask about scams, fraud and safety."
+                android:textColor="@color/guard_subtle"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnEditTitle"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_menu_edit"
+            android:tint="@android:color/white"
+            android:contentDescription="Edit chat name" />
+    </LinearLayout>
+
+    <!-- MESSAGES AREA -->
+    <ScrollView
+        android:id="@+id/scrollMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:id="@+id/layoutMessages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Initial assistant bubble -->
+            <TextView
+                android:id="@+id/tvWelcomeMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hi, I’m Sentricall Copilot. Share a message or call summary and I’ll help you check if it looks safe."
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:background="#111827"
+                android:padding="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- INPUT ROW -->
+    <LinearLayout
+        android:id="@+id/layoutInputRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type a message..."
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/guard_subtle"
+            android:background="@android:color/transparent"
+            android:maxLines="4"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:minWidth="0dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Send"
+            android:textAllCaps="false"
+            android:textColor="#022C22"
+            android:backgroundTint="@color/guard_green" />
+    </LinearLayout>
+
+</LinearLayout>

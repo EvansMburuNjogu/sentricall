@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- App theme -->
+    <style name="Theme.Sentricall" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Your primary colors -->
+        <item name="colorPrimary">#22C55E</item>
+        <item name="colorOnPrimary">#022C22</item>
+
+        <!-- Dark background -->
+        <item name="android:windowBackground">#020617</item>
+
+        <!-- Important for TextInputLayout in dark mode -->
+        <item name="colorOnSurface">@android:color/white</item>
+        <item name="colorOutline">@android:color/white</item>
+    </style>
+</resources>

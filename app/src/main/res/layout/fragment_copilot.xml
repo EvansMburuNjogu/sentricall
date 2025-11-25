@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/guard_bg">
+
+    <LinearLayout
+        android:id="@+id/copilot_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <TextView
+            android:id="@+id/tvCopilotTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sentricall Copilot"
+            android:textColor="@color/guard_text"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="50dp" />
+
+        <TextView
+            android:id="@+id/tvCopilotSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Review fraud calls, chats and AI sessions in one place."
+            android:textColor="@color/guard_subtle"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+
+        <!-- New chat button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNewChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start new AI chat"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/guard_green"
+            android:textColor="#022C22"
+            app:cornerRadius="16dp"
+            app:icon="@android:drawable/ic_input_add"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp" />
+
+        <!-- Scrollable content -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Existing chats card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#020617"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#111827"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvChatsHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Existing chats"
+                            android:textColor="@color/guard_text"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Tap a chat to continue your AI investigation."
+                            android:textColor="@color/guard_subtle"
+                            android:textSize="13sp"
+                            android:layout_marginTop="4dp" />
+
+                        <LinearLayout
+                            android:id="@+id/containerChats"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="12dp">
+
+                            <!-- Sample chat item -->
+                            <LinearLayout
+                                android:id="@+id/itemChatSample"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp"
+                                android:background="#111827"
+                                android:layout_marginBottom="8dp"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <!-- Row: title + delete -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvChatItemTitle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Suspicious MPesa call - Mum"
+                                        android:textColor="@color/guard_text"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:maxLines="1"
+                                        android:ellipsize="end" />
+
+                                    <ImageButton
+                                        android:id="@+id/btnDeleteChat"
+                                        android:layout_width="32dp"
+                                        android:layout_height="32dp"
+                                        android:background="@android:color/transparent"
+                                        android:src="@android:drawable/ic_menu_delete"
+                                        android:tint="#F87171"
+                                        android:contentDescription="Delete chat" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Last updated: 2 hours ago"
+                                    android:textColor="@color/guard_subtle"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Existing sessions card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#020617"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#111827"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvSessionsHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sessions history"
+                            android:textColor="@color/guard_text"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Audio, screen, and upload sessions analysed by Copilot."
+                            android:textColor="@color/guard_subtle"
+                            android:textSize="13sp"
+                            android:layout_marginTop="4dp" />
+
+                        <LinearLayout
+                            android:id="@+id/containerSessions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="12dp">
+
+                            <!-- Sample session item -->
+                            <LinearLayout
+                                android:id="@+id/itemSessionSample"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp"
+                                android:background="#111827"
+                                android:layout_marginBottom="8dp"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <!-- Row: title + delete -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvSessionItemTitle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Recorded audio – Insurance scam check"
+                                        android:textColor="@color/guard_text"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:maxLines="1"
+                                        android:ellipsize="end" />
+
+                                    <ImageButton
+                                        android:id="@+id/btnDeleteSession"
+                                        android:layout_width="32dp"
+                                        android:layout_height="32dp"
+                                        android:background="@android:color/transparent"
+                                        android:src="@android:drawable/ic_menu_delete"
+                                        android:tint="#F87171"
+                                        android:contentDescription="Delete session" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Type: Audio • Result: Potential fraud"
+                                    android:textColor="@color/guard_subtle"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

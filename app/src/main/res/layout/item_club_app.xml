@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemClubRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#111827"
+    android:padding="12dp"
+    android:layout_marginBottom="8dp">
+
+    <TextView
+        android:id="@+id/tvAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensitive app"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvAppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="com.example.sensitive"
+        android:textColor="#9CA3AF"
+        android:textSize="12sp"
+        android:layout_marginTop="2dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRemoveProtected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remove"
+        android:textAllCaps="false"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@android:color/transparent"
+        android:textColor="#F97373" />
+</LinearLayout>

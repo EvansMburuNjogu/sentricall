@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sentricall dark theme -->
+    <color name="sentricall_bg">#020617</color>
+    <color name="sentricall_text">#F9FAFB</color>
+    <color name="sentricall_subtle">#9CA3AF</color>
+    <color name="sentricall_green">#22C55E</color>
+
+    <color name="guard_bg">#020617</color>
+    <color name="guard_text">#F9FAFB</color>
+    <color name="guard_subtle">#9CA3AF</color>
+    <color name="guard_green">#22C55E</color>
+
+    <!-- NEW: red for delete buttons -->
+    <color name="guard_red">#EF4444</color>
+</resources>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lockGateRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/guard_bg"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="24dp">
+
+    <!-- Top spacing so we don't sit under status bar -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:id="@+id/tvGateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sentricall Club mode"
+        android:textColor="@color/guard_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvGateSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Before opening this app, complete your security check."
+        android:textColor="@color/guard_subtle"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:id="@+id/tvGateHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="For now this is a simple guard screen. Later we’ll plug in PIN / voice / face checks."
+            android:textColor="@color/guard_subtle"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Spacer -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Bottom buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Close"
+            android:textAllCaps="false"
+            android:textColor="@color/guard_subtle"
+            android:backgroundTint="@android:color/transparent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUnlock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unlock"
+            android:textAllCaps="false"
+            android:layout_marginStart="8dp"
+            android:textColor="#022C22"
+            android:backgroundTint="@color/guard_green" />
+    </LinearLayout>
+
+</LinearLayout>

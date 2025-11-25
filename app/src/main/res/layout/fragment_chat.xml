@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/chat_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/guard_bg"
+    android:fitsSystemWindows="true"
+    android:paddingTop="50dp">
+
+    <!-- TOP APP BAR -->
+    <LinearLayout
+        android:id="@+id/chatAppBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            android:src="@drawable/ic_back_arrow"
+            android:tint="@android:color/white"
+            android:contentDescription="Back" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/tvChatTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New AI chat"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvChatSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ask questions about scams, fraud and safety."
+                android:textColor="#9CA3AF"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- SCROLLABLE MESSAGES AREA -->
+    <ScrollView
+        android:id="@+id/scrollMessages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/chatAppBar"
+        app:layout_constraintBottom_toTopOf="@id/layoutInputRow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layoutMessages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- DUMMY CONVERSATION BUBBLES -->
+
+            <!-- Assistant bubble -->
+            <TextView
+                android:id="@+id/tvWelcomeMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#111827"
+                android:padding="12dp"
+                android:text="Hi, I’m Sentricall Copilot. Share a message, screenshot or call summary and I’ll help you check if it looks safe."
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <!-- Assistant bubble -->
+            <TextView
+                android:id="@+id/tvAssistantTip1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#111827"
+                android:padding="12dp"
+                android:text="This message looks like a fake bank alert. Do not share your PIN."
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <!-- User bubble (aligned to the right) -->
+            <TextView
+                android:id="@+id/tvUserExample"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginBottom="8dp"
+                android:background="#22C55E"
+                android:padding="12dp"
+                android:text="They said my account will be closed in 30 minutes."
+                android:textColor="#022C22"
+                android:textSize="14sp" />
+
+            <!-- Assistant bubble -->
+            <TextView
+                android:id="@+id/tvAssistantTip2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#111827"
+                android:padding="12dp"
+                android:text="Real banks do not threaten to close accounts over SMS. This is very likely fraud."
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- BOTTOM INPUT BAR -->
+    <LinearLayout
+        android:id="@+id/layoutInputRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#020617"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minLines="1"
+            android:maxLines="4"
+            android:gravity="top|start"
+            android:scrollbars="vertical"
+            android:overScrollMode="ifContentScrolls"
+            android:inputType="textCapSentences|textMultiLine"
+            android:hint="Type a message..."
+            android:textColor="@android:color/white"
+            android:textColorHint="#9CA3AF"
+            android:background="@android:color/transparent"
+            android:padding="4dp" />
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:minWidth="0dp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:text="Send"
+            android:textAllCaps="false"
+            android:textColor="#022C22"
+            android:backgroundTint="#22C55E" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lock_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/guard_bg"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <!-- Header with 50dp top spacing -->
+    <LinearLayout
+        android:id="@+id/lockHeaderContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvLockTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sentricall Lock"
+            android:textColor="@color/guard_text"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvLockSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hide sensitive apps behind AI checks and a club mode PIN."
+            android:textColor="@color/guard_subtle"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Club mode card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardClubMode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="#020617"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        app:strokeColor="#111827"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toBottomOf="@id/lockHeaderContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvClubTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Club mode"
+                    android:textColor="@color/guard_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Switch
+                    android:id="@+id/switchClubMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvClubStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Club mode is OFF. Apps behave normally."
+                android:textColor="@color/guard_text"
+                android:textSize="13sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/tvClubHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="When ON, selected apps disappear from your home screen and require voice/face checks before opening."
+                android:textColor="@color/guard_subtle"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Protected apps header -->
+    <TextView
+        android:id="@+id/tvProtectedTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Protected apps"
+        android:textColor="@color/guard_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/cardClubMode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvProtectedSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Apps listed here will be locked behind Club mode and AI screening."
+        android:textColor="@color/guard_subtle"
+        android:textSize="13sp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tvProtectedTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Empty state -->
+    <TextView
+        android:id="@+id/tvEmptyApps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="No protected apps yet. Tap “Add apps to Club mode” to start."
+        android:textColor="@color/guard_subtle"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tvProtectedSubtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Protected apps list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerClubApps"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvProtectedSubtitle"
+        app:layout_constraintBottom_toTopOf="@id/btnAddProtectedApps"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Add apps button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddProtectedApps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Add apps to Club mode"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/guard_green"
+        android:textColor="#022C22"
+        app:cornerRadius="16dp"
+        app:icon="@android:drawable/ic_input_add"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
