@@ -13,4 +13,5 @@
 
     <!-- NEW: red for delete buttons -->
     <color name="guard_red">#EF4444</color>
+    <color name="guard_card">#111827</color>
 </resources>
