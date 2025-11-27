@@ -3,6 +3,7 @@ package com.ke.sentricall
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -38,13 +39,13 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var etMessage: EditText
     private lateinit var btnSend: Button
 
-    // Distinguish chat vs session
     private var chatId: String? = null
     private var sessionId: String? = null
 
+    private var isSending: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Using fragment_chat as the screen layout for this Activity
         setContentView(R.layout.fragment_chat)
 
         tvChatTitle = findViewById(R.id.tvChatTitle)
@@ -55,7 +56,6 @@ class ChatActivity : AppCompatActivity() {
         etMessage = findViewById(R.id.etMessage)
         btnSend = findViewById(R.id.btnSend)
 
-        // Read extras
         chatId = intent.getStringExtra("chat_id")
         sessionId = intent.getStringExtra("session_id")
 
@@ -65,43 +65,61 @@ class ChatActivity : AppCompatActivity() {
             return
         }
 
-        // Initial title from extras, will be refined from API
         val initialTitle = intent.getStringExtra("chat_name")
             ?: intent.getStringExtra("session_name")
             ?: if (chatId != null) "Copilot chat" else "Copilot session"
 
         tvChatTitle.text = initialTitle
 
-        // Subtitle based on mode
         tvChatSubtitle.text = if (sessionId != null) {
             "Review what happened in this recorded session."
         } else {
             "Ask questions about scams, fraud and safety."
         }
 
-        // Back button
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
-        // Click title to rename (local only for now)
         tvChatTitle.setOnClickListener {
             showRenameChatDialog(tvChatTitle.text.toString())
         }
 
-        // Simple "Send" behaviour (local echo for now)
         btnSend.setOnClickListener {
             val text = etMessage.text.toString().trim()
-            if (text.isNotEmpty()) {
-                addUserMessageBubble(text)
-                etMessage.setText("")
-                scrollToBottom()
-                // Later: send to backend and append AI response
+            if (text.isEmpty()) return@setOnClickListener
+
+            if (!isOnline()) {
+                Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            if (chatId == null && sessionId != null) {
+                Toast.makeText(
+                    this,
+                    "AI questions for sessions are coming soon.",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+
+            // Show user message immediately
+            addUserMessageBubble(text)
+            etMessage.setText("")
+            scrollToBottom()
+
+            // Call backend -> ask_chat
+            sendMessageToCopilot(text)
         }
 
-        // Load chat/session details + history from backend
         loadChatOrSession()
+    }
+
+    // --------------------------------------------------
+    // DP HELPER
+    // --------------------------------------------------
+
+    private fun dp(value: Int): Int {
+        val density = resources.displayMetrics.density
+        return (value * density).toInt()
     }
 
     // --------------------------------------------------
@@ -143,7 +161,6 @@ class ChatActivity : AppCompatActivity() {
             var convConnection: HttpURLConnection? = null
 
             try {
-                // 1) Fetch chat/session details (to refresh title)
                 Log.d(TAG, "GET detail URL: $detailUrl")
                 detailConnection = (URL(detailUrl).openConnection() as HttpURLConnection).apply {
                     requestMethod = "GET"
@@ -168,7 +185,6 @@ class ChatActivity : AppCompatActivity() {
                     return@Thread
                 }
 
-                // 2) Fetch conversations
                 Log.d(TAG, "GET conv URL: $convUrl")
                 convConnection = (URL(convUrl).openConnection() as HttpURLConnection).apply {
                     requestMethod = "GET"
@@ -193,12 +209,9 @@ class ChatActivity : AppCompatActivity() {
                     return@Thread
                 }
 
-                // Update UI
                 runOnUiThread {
                     if (detailStatus in 200..299) {
                         updateTitleFromDetail(detailBody, isChatMode)
-                    } else {
-                        Log.w(TAG, "Failed to load detail: $detailStatus")
                     }
 
                     if (convStatus in 200..299) {
@@ -211,7 +224,6 @@ class ChatActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading chat/session", e)
                 runOnUiThread {
@@ -231,12 +243,7 @@ class ChatActivity : AppCompatActivity() {
     private fun updateTitleFromDetail(json: String, isChatMode: Boolean) {
         try {
             val root = JSONObject(json)
-            val obj = if (isChatMode) {
-                root.optJSONObject("chat")
-            } else {
-                root.optJSONObject("session")
-            }
-
+            val obj = if (isChatMode) root.optJSONObject("chat") else root.optJSONObject("session")
             val name = obj?.optString("name", "") ?: ""
             if (name.isNotBlank()) {
                 tvChatTitle.text = name
@@ -251,11 +258,9 @@ class ChatActivity : AppCompatActivity() {
             val root = JSONObject(json)
             val arr: JSONArray = root.optJSONArray("conversations") ?: JSONArray()
 
-            // Clear any old views
             layoutMessages.removeAllViews()
 
             if (arr.length() == 0) {
-                // ✅ No default / welcome message. Leave area empty.
                 return
             }
 
@@ -263,7 +268,8 @@ class ChatActivity : AppCompatActivity() {
                 val obj = arr.optJSONObject(i) ?: continue
 
                 val role = obj.optString("role", "assistant").lowercase()
-                val text = obj.optString("message",
+                val text = obj.optString(
+                    "message",
                     obj.optString("content", "")
                 )
 
@@ -284,51 +290,175 @@ class ChatActivity : AppCompatActivity() {
     }
 
     // --------------------------------------------------
-    // BUBBLES
+    // SEND MESSAGE TO COPILOT
     // --------------------------------------------------
 
-    private fun addUserMessageBubble(message: String) {
+    private fun sendMessageToCopilot(userMessage: String) {
+        if (isSending) return
+        isSending = true
+        btnSend.isEnabled = false
+
+        val prefs = getSharedPreferences("sentricall_prefs", Context.MODE_PRIVATE)
+        val token = prefs.getString("auth_token", null)
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_LONG).show()
+            navigateToLogin()
+            isSending = false
+            btnSend.isEnabled = true
+            return
+        }
+
+        val isChatMode = chatId != null
+        val id = chatId ?: sessionId
+
+        if (id == null) {
+            Toast.makeText(this, "Missing chat/session ID.", Toast.LENGTH_LONG).show()
+            isSending = false
+            btnSend.isEnabled = true
+            return
+        }
+
+        val assistantBubble = addAssistantMessageBubble("Copilot is thinking…")
+        scrollToBottom()
+
+        Thread {
+            var connection: HttpURLConnection? = null
+            try {
+                val askUrl = if (isChatMode) {
+                    AppConfig.BASE_URL + "chats/ask_chat/$id/ask"
+                } else {
+                    AppConfig.BASE_URL + "sessions/ask_session/$id"
+                }
+
+                Log.d(TAG, "POST ask URL: $askUrl")
+
+                connection = (URL(askUrl).openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    setRequestProperty("Content-Type", "application/json")
+                    setRequestProperty("Authorization", "Bearer $token")
+                    doOutput = true
+                    connectTimeout = 15000
+                    readTimeout = 15000
+                }
+
+                val payload = JSONObject().apply {
+                    put("question", userMessage)
+                }
+
+                connection.outputStream.use { os ->
+                    val bytes = payload.toString().toByteArray(Charsets.UTF_8)
+                    os.write(bytes, 0, bytes.size)
+                }
+
+                val status = connection.responseCode
+                val body = if (status in 200..299) {
+                    connection.inputStream.bufferedReader().use { it.readText() }
+                } else {
+                    connection.errorStream?.bufferedReader()?.use { it.readText() } ?: ""
+                }
+
+                Log.d(TAG, "ask_chat status=$status body=$body")
+
+                runOnUiThread {
+                    isSending = false
+                    btnSend.isEnabled = true
+
+                    if (status in 200..299) {
+                        assistantBubble.text = "Updating conversation…"
+                        loadChatOrSession()
+                    } else {
+                        val msg = if (status == 404) {
+                            "Error from Copilot (404). Please update the app or contact support."
+                        } else {
+                            "Error from Copilot ($status)."
+                        }
+                        assistantBubble.text = msg
+                        scrollToBottom()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Network error calling Copilot", e)
+                runOnUiThread {
+                    isSending = false
+                    btnSend.isEnabled = true
+                    assistantBubble.text =
+                        "Network error talking to Copilot: ${e.localizedMessage ?: "check your connection"}"
+                    scrollToBottom()
+                }
+            } finally {
+                connection?.disconnect()
+            }
+        }.start()
+    }
+
+    // --------------------------------------------------
+    // BUBBLES (CARD STYLE)
+    // --------------------------------------------------
+
+    private fun addUserMessageBubble(message: String): TextView {
         val bubble = TextView(this).apply {
             text = message
             setTextColor(Color.parseColor("#022C22"))
             textSize = 14f
-            setBackgroundColor(Color.parseColor("#22C55E")) // green
-            setPadding(16, 12, 16, 12)
+
+            // Rounded green background (card-like)
+            background = GradientDrawable().apply {
+                setColor(Color.parseColor("#22C55E"))
+                cornerRadius = dp(16).toFloat()
+            }
+
+            // Inner padding
+            setPadding(dp(12), dp(8), dp(12), dp(8))
 
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            params.topMargin = 8
-            params.bottomMargin = 4
-            params.marginEnd = 24
+            params.topMargin = dp(6)
+            params.bottomMargin = dp(6)
+            params.marginEnd = dp(16)
             params.gravity = android.view.Gravity.END
             layoutParams = params
+
+            // Limit width so it doesn't span the whole screen
+            maxWidth = (resources.displayMetrics.widthPixels * 0.75f).toInt()
         }
 
         layoutMessages.addView(bubble)
+        return bubble
     }
 
-    private fun addAssistantMessageBubble(message: String) {
+    private fun addAssistantMessageBubble(message: String): TextView {
         val bubble = TextView(this).apply {
             text = message
             setTextColor(Color.WHITE)
             textSize = 14f
-            setBackgroundColor(Color.parseColor("#111827")) // dark gray
-            setPadding(16, 12, 16, 12)
+
+            // Rounded dark background (card-like)
+            background = GradientDrawable().apply {
+                setColor(Color.parseColor("#111827"))
+                cornerRadius = dp(16).toFloat()
+            }
+
+            // Inner padding
+            setPadding(dp(12), dp(8), dp(12), dp(8))
 
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            params.topMargin = 8
-            params.bottomMargin = 4
-            params.marginStart = 24
+            params.topMargin = dp(6)
+            params.bottomMargin = dp(6)
+            params.marginStart = dp(16)
             params.gravity = android.view.Gravity.START
             layoutParams = params
+
+            maxWidth = (resources.displayMetrics.widthPixels * 0.75f).toInt()
         }
 
         layoutMessages.addView(bubble)
+        return bubble
     }
 
     private fun scrollToBottom() {
@@ -338,7 +468,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     // --------------------------------------------------
-    // RENAME DIALOG (LOCAL ONLY FOR NOW)
+    // RENAME DIALOG
     // --------------------------------------------------
 
     private fun showRenameChatDialog(currentTitle: String) {
@@ -350,7 +480,6 @@ class ChatActivity : AppCompatActivity() {
         val btnCancel: View = dialogView.findViewById(R.id.btnCancel)
         val btnCreate: Button = dialogView.findViewById(R.id.btnCreate)
 
-        // Customize for "Rename chat"
         tvDialogTitle.text = "Rename chat"
         tvDialogSubtitle.text = "Update how this chat appears in your list."
         etChatName.setText(currentTitle)
@@ -363,9 +492,7 @@ class ChatActivity : AppCompatActivity() {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
+        btnCancel.setOnClickListener { dialog.dismiss() }
 
         btnCreate.setOnClickListener {
             var newName = etChatName.text?.toString()?.trim() ?: ""
@@ -373,7 +500,7 @@ class ChatActivity : AppCompatActivity() {
                 newName = "Copilot chat"
             }
             tvChatTitle.text = newName
-            // TODO: call backend to persist name change if needed
+            // TODO: persist rename in backend if needed
             dialog.dismiss()
         }
 
