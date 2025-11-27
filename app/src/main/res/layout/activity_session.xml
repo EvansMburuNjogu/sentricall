@@ -1,46 +1,305 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/session_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/guard_bg">
+    android:background="@color/guard_bg"
+    android:fitsSystemWindows="true"
+    android:paddingTop="50dp"
+    tools:context=".SessionActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbarSession"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/guard_bg"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:navigationIcon="@android:drawable/ic_media_previous"
-        app:title="New session" />
+    <!-- TOP APP BAR -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            android:src="@drawable/ic_back_arrow"
+            android:tint="@android:color/white"
+            android:contentDescription="Back" />
 
         <LinearLayout
-            android:id="@+id/sessionContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSessionHeaderTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Session title"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSessionHeaderSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Session subtitle / description"
+                android:textColor="#9CA3AF"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- MAIN CONTENT -->
+    <ScrollView
+        android:id="@+id/scrollSessionContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+        app:layout_constraintBottom_toTopOf="@id/btnReportSession"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layoutSessionInner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="24dp"
-            android:paddingTop="50dp">
+            android:orientation="vertical">
 
-            <!-- Session type card -->
+            <!-- CARD 1: SESSION TYPE -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardSessionType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="#020617"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="4dp"
-                app:strokeColor="#111827"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="16dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Icon + title + body -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/imgSessionIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:tint="@android:color/white"
+                            android:src="@android:drawable/ic_btn_speak_now" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSessionTypeTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Session type title"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvSessionTypeBody"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Short description of what this session type does."
+                                android:textColor="#9CA3AF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- SPACER -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp" />
+
+                    <!-- AUDIO SPECTRUM + TIMER (LISTEN_AUDIO only) -->
+                    <com.ke.sentricall.AudioSpectrumView
+                        android:id="@+id/audioSpectrumView"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvSessionTimer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="00:00"
+                        android:textColor="#9CA3AF"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                    <!-- FILE INPUT (UPLOAD_MEDIA) -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/layoutFileUpload"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone"
+                        app:cardCornerRadius="8dp"
+                        app:cardBackgroundColor="@android:color/transparent"
+                        app:strokeColor="#1F2933"
+                        app:strokeWidth="1dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@android:drawable/ic_menu_upload"
+                                android:tint="#9CA3AF"
+                                android:contentDescription="Choose file" />
+
+                            <TextView
+                                android:id="@+id/tvFileUploadHint"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="8dp"
+                                android:text="Tap to choose a file"
+                                android:textColor="#9CA3AF"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- WEBSITE URL INPUT (WEBSITE_LINK only) -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutWebsiteUrl"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone"
+                        android:hint="Website URL"
+                        app:boxBackgroundColor="@android:color/transparent"
+                        app:boxStrokeColor="#22C55E"
+                        app:boxStrokeWidth="1dp"
+                        app:boxStrokeWidthFocused="2dp"
+                        app:boxCornerRadiusTopStart="8dp"
+                        app:boxCornerRadiusTopEnd="8dp"
+                        app:boxCornerRadiusBottomStart="8dp"
+                        app:boxCornerRadiusBottomEnd="8dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etWebsiteUrl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textUri"
+                            android:textColor="@android:color/white"
+                            android:textColorHint="#9CA3AF" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- PRIMARY ACTION BUTTON -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnStartStop"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Start"
+                        android:textAllCaps="false"
+                        android:textColor="#022C22"
+                        android:textSize="14sp"
+                        app:cornerRadius="8dp"
+                        app:backgroundTint="#22C55E" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CARD 2: AI ANALYSIS -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAiAnalysis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#020617"
+                app:cardCornerRadius="16dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvAiAnalysisTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI analysis for this session"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvAiAnalysisBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="When you start a session, AI insights will appear here."
+                        android:textColor="#9CA3AF"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvOpenAiChatLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Open detailed AI chat for this session"
+                        android:textColor="#22C55E"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- LAST RECORDING (audio or screen) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardLastRecording"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="#020617"
+                app:cardCornerRadius="16dp"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -49,146 +308,62 @@
                     android:gravity="center_vertical"
                     android:padding="16dp">
 
-                    <ImageView
-                        android:id="@+id/imgSessionTypeIcon"
+                    <ImageButton
+                        android:id="@+id/btnPlayLastRecording"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@android:drawable/ic_btn_speak_now" />
+                        android:background="@android:color/transparent"
+                        android:src="@android:drawable/ic_media_play"
+                        android:tint="@android:color/white"
+                        android:contentDescription="Play" />
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
+                        android:layout_marginStart="8dp"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/tvSessionTypeTitle"
+                            android:id="@+id/tvLastRecordingTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Listen to Audio"
-                            android:textColor="@color/guard_text"
-                            android:textSize="16sp"
+                            android:text="Last recording"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/tvSessionTypeDescription"
-                            android:layout_width="match_parent"
+                            android:id="@+id/tvLastRecordingSubtitle"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Guard listens for suspicious phrases in real time."
-                            android:textColor="@color/guard_subtle"
-                            android:textSize="13sp"
-                            android:layout_marginTop="2dp" />
+                            android:text="00:00 • Tap to play"
+                            android:textColor="#9CA3AF"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Specific session component placeholder -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardSessionSpecific"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="#020617"
-                app:cardCornerRadius="18dp"
-                app:strokeColor="#111827"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:id="@+id/sessionSpecificContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tvSessionSpecificTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Live audio monitoring"
-                        android:textColor="@color/guard_text"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvSessionSpecificBody"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Guard will listen to this session and highlight phrases that look risky."
-                        android:textColor="@color/guard_subtle"
-                        android:textSize="13sp"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- AI analytics summary -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardAiAnalytics"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="#020617"
-                app:cardCornerRadius="18dp"
-                app:strokeColor="#111827"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tvAiSummaryTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="AI quick scan"
-                        android:textColor="@color/guard_text"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvAiSummaryBody"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="No fraud patterns detected yet. Guard will update this as the session runs."
-                        android:textColor="@color/guard_subtle"
-                        android:textSize="13sp"
-                        android:layout_marginTop="4dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnOpenAiChat"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Open in AI chat"
-                        android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:layout_marginTop="12dp"
-                        android:backgroundTint="@color/guard_green"
-                        android:textColor="#022C22"
-                        app:cornerRadius="18dp"
-                        app:icon="@android:drawable/ic_menu_send"
-                        app:iconGravity="textStart"
-                        app:iconPadding="8dp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Report button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReportSession"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Report this session"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:layout_marginTop="22dp"
-                android:backgroundTint="@android:color/transparent"
-                android:textColor="#F97373"
-                app:strokeColor="#4B5563"
-                app:strokeWidth="1dp"
-                app:cornerRadius="18dp" />
-
         </LinearLayout>
     </ScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <!-- REPORT BUTTON -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnReportSession"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Report this session"
+        android:textAllCaps="false"
+        android:textColor="#F97373"
+        app:strokeColor="#F97373"
+        app:strokeWidth="1dp"
+        app:cornerRadius="999dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

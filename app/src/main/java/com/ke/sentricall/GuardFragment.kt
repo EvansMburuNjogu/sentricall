@@ -1,11 +1,11 @@
 package com.ke.sentricall
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,11 +13,9 @@ import com.google.android.material.button.MaterialButton
 
 class GuardFragment : Fragment(R.layout.fragment_guard) {
 
-    private lateinit var quickLock: View
-    private lateinit var quickCopilot: View
-    private lateinit var quickProfile: View
     private lateinit var btnAddSession: MaterialButton
     private lateinit var rvSessions: RecyclerView
+    private lateinit var tvEmptySessions: TextView
 
     private val sessions = mutableListOf<GuardSession>()
     private lateinit var sessionsAdapter: GuardSessionAdapter
@@ -25,41 +23,30 @@ class GuardFragment : Fragment(R.layout.fragment_guard) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        quickLock = view.findViewById(R.id.quickLock)
-        quickCopilot = view.findViewById(R.id.quickCopilot)
-        quickProfile = view.findViewById(R.id.quickProfile)
         btnAddSession = view.findViewById(R.id.btnAddSession)
         rvSessions = view.findViewById(R.id.rvSessions)
+        tvEmptySessions = view.findViewById(R.id.tvEmptySessions)
 
-        // Recycler setup
-        sessionsAdapter = GuardSessionAdapter(sessions)
+        sessionsAdapter = GuardSessionAdapter(sessions) { session ->
+            openSession(session)
+        }
         rvSessions.layoutManager = LinearLayoutManager(requireContext())
         rvSessions.adapter = sessionsAdapter
 
-        // Quick links – placeholder actions for now
-        quickLock.setOnClickListener {
-            Toast.makeText(requireContext(), "Lock quick link tapped", Toast.LENGTH_SHORT).show()
-        }
+        updateEmptyState()
 
-        quickCopilot.setOnClickListener {
-            Toast.makeText(requireContext(), "Copilot quick link tapped", Toast.LENGTH_SHORT).show()
-        }
-
-        quickProfile.setOnClickListener {
-            Toast.makeText(requireContext(), "Profile quick link tapped", Toast.LENGTH_SHORT).show()
-        }
-
-        // Add session – open the dialog
+        // Start new session – open type chooser
         btnAddSession.setOnClickListener {
             val dialog = SessionTypeDialogFragment()
             dialog.sessionTypeSelectedListener = { type ->
-                addNewSession(type)
+                val session = addNewSession(type)
+                openSession(session)
             }
             dialog.show(childFragmentManager, "session_type")
         }
     }
 
-    private fun addNewSession(type: SessionType) {
+    private fun addNewSession(type: SessionType): GuardSession {
         val (title, subtitle) = when (type) {
             SessionType.LISTEN_AUDIO ->
                 "Listening session" to "Guard is ready to listen for suspicious phrases."
@@ -77,9 +64,30 @@ class GuardFragment : Fragment(R.layout.fragment_guard) {
             title = title,
             subtitle = subtitle
         )
+
         sessions.add(0, session)
         sessionsAdapter.notifyItemInserted(0)
         rvSessions.scrollToPosition(0)
+        updateEmptyState()
+
+        return session
+    }
+
+    private fun updateEmptyState() {
+        tvEmptySessions.visibility = if (sessions.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun openSession(session: GuardSession) {
+        val ctx = requireContext()
+        val intent = Intent(ctx, SessionActivity::class.java).apply {
+            // 🔹 Send the string id that matches your enum: "listen_audio", "record_screen", etc.
+            putExtra("session_mode", session.type.id)
+
+            // 🔹 Also send title & subtitle for the header
+            putExtra(SessionActivity.EXTRA_SESSION_TITLE, session.title)
+            putExtra(SessionActivity.EXTRA_SESSION_SUBTITLE, session.subtitle)
+        }
+        startActivity(intent)
     }
 
     // --------- Models & Adapter ----------
@@ -92,7 +100,8 @@ class GuardFragment : Fragment(R.layout.fragment_guard) {
     )
 
     private class GuardSessionAdapter(
-        private val items: List<GuardSession>
+        private val items: List<GuardSession>,
+        private val onClick: (GuardSession) -> Unit
     ) : RecyclerView.Adapter<GuardSessionAdapter.SessionViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
@@ -102,7 +111,7 @@ class GuardFragment : Fragment(R.layout.fragment_guard) {
         }
 
         override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
-            holder.bind(items[position])
+            holder.bind(items[position], onClick)
         }
 
         override fun getItemCount(): Int = items.size
@@ -110,19 +119,19 @@ class GuardFragment : Fragment(R.layout.fragment_guard) {
         class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val tvTitle: TextView = itemView.findViewById(R.id.tvSessionTitle)
             private val tvSubtitle: TextView = itemView.findViewById(R.id.tvSessionSubtitle)
+            private val tvTypeChip: TextView = itemView.findViewById(R.id.tvSessionTypeChip)
 
-            fun bind(session: GuardSession) {
+            fun bind(session: GuardSession, onClick: (GuardSession) -> Unit) {
                 tvTitle.text = session.title
                 tvSubtitle.text = session.subtitle
-
-                // Click to open session detail later
-                itemView.setOnClickListener {
-                    Toast.makeText(
-                        itemView.context,
-                        "Open ${session.title}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                tvTypeChip.text = when (session.type) {
+                    SessionType.LISTEN_AUDIO -> "Listen to audio"
+                    SessionType.RECORD_SCREEN -> "Record screen"
+                    SessionType.UPLOAD_MEDIA -> "Upload media"
+                    SessionType.WEBSITE_LINK -> "Website link"
                 }
+
+                itemView.setOnClickListener { onClick(session) }
             }
         }
     }
