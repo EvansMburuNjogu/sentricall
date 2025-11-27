@@ -4,8 +4,8 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class SessionTypeDialogFragment : DialogFragment() {
 
@@ -40,7 +40,8 @@ class SessionTypeDialogFragment : DialogFragment() {
             dismiss()
         }
 
-        return AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_MaterialComponents_Dialog)
+        // Use MaterialAlertDialogBuilder without a custom style
+        return MaterialAlertDialogBuilder(requireContext())
             .setView(view)
             .create()
     }

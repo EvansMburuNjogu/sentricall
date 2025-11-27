@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ke.sentricall">
 
-    <!-- Let us query launcher apps (for your app picker dialog) -->
+    <!-- For launcher app query (if you ever need it) -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
@@ -12,42 +12,67 @@
         </intent>
     </queries>
 
-    <!-- (Optional) Still here if you later want UsageStats-based detection -->
+    <!-- Optional usage stats (for app usage tracking etc.) -->
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
+    <!-- Mic for audio listening -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Foreground service permissions -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- ✅ Needed for ConnectivityManager / isOnline() -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Foreground service for screen recording / MediaProjection (Android 14+ aware) -->
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"
+        tools:targetApi="34" />
+
     <application
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Sentricall">
 
-        <!-- Lock gate screen shown on top of other apps when a protected app is opened -->
+        <!-- Lock gate / app lock screen -->
         <activity
             android:name=".LockGateActivity"
             android:excludeFromRecents="true"
             android:exported="false" />
 
-        <!-- Your other activities -->
+        <!-- Chat screen -->
         <activity
             android:name=".ChatActivity"
             android:exported="false" />
 
+        <!-- Account / profile / guard home screen -->
         <activity
             android:name=".AccountActivity"
             android:exported="false" />
 
+        <!-- Signup flow -->
         <activity
             android:name=".SignupActivity"
             android:exported="false" />
-        <activity android:name=".SessionActivity" />
-        <activity android:name=".PreviousSessionsActivity" />
 
+        <!-- Guard session detail screen (audio, screen, upload, link) -->
+        <activity
+            android:name=".SessionActivity"
+            android:exported="false" />
 
-        <!-- Launcher activity -->
+        <!-- Previous sessions list -->
+        <activity
+            android:name=".PreviousSessionsActivity"
+            android:exported="false" />
+
+        <!-- ✅ Main router activity is now the launcher -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -57,7 +82,12 @@
             </intent-filter>
         </activity>
 
-        <!-- Accessibility-based watcher for Club mode -->
+        <!-- ✅ Login screen (no launcher) -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+
+        <!-- Accessibility watcher for suspicious flows -->
         <service
             android:name=".SentricallAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
@@ -72,11 +102,24 @@
                 android:resource="@xml/sentricall_accessibility_config" />
         </service>
 
-        <!-- If you still keep AppLockService but no longer use it, you can either:
-             - remove this block, or
-             - leave it commented out.
-        -->
-        <!--
+        <!-- Foreground service for screen recording (MediaProjection) -->
+        <service
+            android:name=".ScreenRecordingService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!-- File provider for sharing recordings/files -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Old AppLockService (kept commented if unused)
         <service
             android:name=".AppLockService"
             android:exported="false" />

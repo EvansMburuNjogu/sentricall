@@ -44,7 +44,7 @@
                 android:id="@+id/tvChatTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New AI chat"
+                android:text="Copilot chat"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -79,56 +79,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- DUMMY CONVERSATION BUBBLES -->
-
-            <!-- Assistant bubble -->
-            <TextView
-                android:id="@+id/tvWelcomeMsg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="#111827"
-                android:padding="12dp"
-                android:text="Hi, I’m Sentricall Copilot. Share a message, screenshot or call summary and I’ll help you check if it looks safe."
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
-
-            <!-- Assistant bubble -->
-            <TextView
-                android:id="@+id/tvAssistantTip1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="#111827"
-                android:padding="12dp"
-                android:text="This message looks like a fake bank alert. Do not share your PIN."
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
-
-            <!-- User bubble (aligned to the right) -->
-            <TextView
-                android:id="@+id/tvUserExample"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginBottom="8dp"
-                android:background="#22C55E"
-                android:padding="12dp"
-                android:text="They said my account will be closed in 30 minutes."
-                android:textColor="#022C22"
-                android:textSize="14sp" />
-
-            <!-- Assistant bubble -->
-            <TextView
-                android:id="@+id/tvAssistantTip2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="#111827"
-                android:padding="12dp"
-                android:text="Real banks do not threaten to close accounts over SMS. This is very likely fraud."
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
+            <!-- ❌ No default / dummy bubbles here.
+                 This container starts empty and is filled by ChatActivity. -->
 
         </LinearLayout>
     </ScrollView>

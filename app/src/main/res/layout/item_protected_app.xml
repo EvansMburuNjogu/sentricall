@@ -28,6 +28,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:layout_marginStart="12dp"
+        android:textColor="@color/guard_text"
         app:layout_constraintStart_toEndOf="@id/ivAppIcon"
         app:layout_constraintEnd_toStartOf="@id/btnRemoveApp"
         app:layout_constraintTop_toTopOf="parent"

@@ -75,6 +75,7 @@ class LockFragment : Fragment() {
         recyclerClubApps.layoutManager = LinearLayoutManager(requireContext())
         recyclerClubApps.adapter = adapter
 
+        // Listen for results from AddAppDialogFragment
         parentFragmentManager.setFragmentResultListener(
             AddAppDialogFragment.RESULT_KEY,
             viewLifecycleOwner
@@ -87,7 +88,7 @@ class LockFragment : Fragment() {
             }
         }
 
-        // Only show PIN dialog for real user toggles
+        // Handle Club mode switch – only show PIN dialog for real user toggles
         switchClubMode.setOnCheckedChangeListener { _, isChecked ->
             if (suppressSwitchCallback) {
                 // Ignore programmatic changes
@@ -110,6 +111,7 @@ class LockFragment : Fragment() {
                     return@setOnCheckedChangeListener
                 }
 
+                // Require PIN (first time: set PIN, next times: verify PIN)
                 lifecycleScope.launch {
                     val settings = withContext(Dispatchers.IO) {
                         clubSettingsDao.getSettings()
@@ -148,6 +150,7 @@ class LockFragment : Fragment() {
                             }
                         },
                         onCancelled = {
+                            // User backed out from PIN dialog → revert switch
                             suppressSwitchCallback = true
                             switchClubMode.isChecked = false
                             suppressSwitchCallback = false
@@ -155,39 +158,52 @@ class LockFragment : Fragment() {
                     )
                 }
             } else {
-                // Turning OFF → still require PIN confirmation
+                // Turning OFF → always require PIN once it has been configured
                 lifecycleScope.launch {
                     val settings = withContext(Dispatchers.IO) {
                         clubSettingsDao.getSettings()
                     }
                     val currentHash = settings?.pinHash
 
-                    // If no PIN was set somehow, just turn off
                     if (currentHash == null) {
-                        withContext(Dispatchers.IO) {
-                            val now = System.currentTimeMillis()
-                            val entity = (settings ?: ClubSettingsEntity()).copy(
-                                clubModeEnabled = false,
-                                updatedAt = now
-                            )
-                            clubSettingsDao.upsert(entity)
-                            ClubModeState.enabled = false
-                        }
-                        withContext(Dispatchers.Main) {
-                            suppressSwitchCallback = true
-                            switchClubMode.isChecked = false
-                            suppressSwitchCallback = false
-                            updateClubStatusText(false)
-                            Toast.makeText(
-                                requireContext(),
-                                "Club mode OFF",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        // No PIN stored yet – treat this as "must set PIN first"
+                        showPinDialog(
+                            currentPinHash = null,
+                            onPinVerifiedOrSet = { newHash ->
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    val now = System.currentTimeMillis()
+                                    val entity = (settings ?: ClubSettingsEntity()).copy(
+                                        clubModeEnabled = false,
+                                        pinHash = newHash,
+                                        updatedAt = now
+                                    )
+                                    clubSettingsDao.upsert(entity)
+                                    ClubModeState.enabled = false
+
+                                    withContext(Dispatchers.Main) {
+                                        suppressSwitchCallback = true
+                                        switchClubMode.isChecked = false
+                                        suppressSwitchCallback = false
+                                        updateClubStatusText(false)
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Club mode OFF",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            },
+                            onCancelled = {
+                                // User cancelled setting PIN → keep Club mode ON
+                                suppressSwitchCallback = true
+                                switchClubMode.isChecked = true
+                                suppressSwitchCallback = false
+                            }
+                        )
                         return@launch
                     }
 
-                    // Ask for PIN before disabling
+                    // Normal path: PIN already exists → verify before disabling
                     showPinDialog(
                         currentPinHash = currentHash,
                         onPinVerifiedOrSet = {
@@ -214,6 +230,7 @@ class LockFragment : Fragment() {
                             }
                         },
                         onCancelled = {
+                            // User cancelled → revert switch back to ON
                             suppressSwitchCallback = true
                             switchClubMode.isChecked = true
                             suppressSwitchCallback = false
@@ -229,12 +246,14 @@ class LockFragment : Fragment() {
             dialog.show(parentFragmentManager, "AddAppDialog")
         }
 
+        // Initial load from local DB
         loadClubSettings()
         loadProtectedApps()
     }
 
     override fun onResume() {
         super.onResume()
+        // If user disabled accessibility outside the app, force Club mode off
         if (!isAccessibilityServiceEnabled() && switchClubMode.isChecked) {
             suppressSwitchCallback = true
             switchClubMode.isChecked = false
@@ -244,6 +263,10 @@ class LockFragment : Fragment() {
             ClubModeState.enabled = false
         }
     }
+
+    // -----------------------------
+    // DB LOADERS
+    // -----------------------------
 
     private fun loadClubSettings() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
@@ -276,6 +299,10 @@ class LockFragment : Fragment() {
             }
         }
     }
+
+    // -----------------------------
+    // PROTECTED APPS MANAGEMENT
+    // -----------------------------
 
     private fun addSelectedApps(selectedPackages: List<String>) {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
@@ -352,6 +379,10 @@ class LockFragment : Fragment() {
         }
     }
 
+    // -----------------------------
+    // ACCESSIBILITY + SETTINGS
+    // -----------------------------
+
     private fun isAccessibilityServiceEnabled(): Boolean {
         val expectedId =
             "${requireContext().packageName}/${SentricallAccessibilityService::class.java.name}"
@@ -368,6 +399,10 @@ class LockFragment : Fragment() {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
+
+    // -----------------------------
+    // PIN DIALOG + HASHING
+    // -----------------------------
 
     private fun showPinDialog(
         currentPinHash: String?,

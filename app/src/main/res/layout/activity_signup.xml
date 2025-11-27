@@ -59,7 +59,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@android:color/white"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxStrokeColor="@color/sentricall_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp">
 
@@ -81,7 +85,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@android:color/white"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxStrokeColor="@color/sentricall_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp">
 
@@ -103,7 +111,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@android:color/white"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxStrokeColor="@color/sentricall_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp">
 
@@ -126,8 +138,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@android:color/white"
             app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@android:color/white"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxStrokeColor="@color/sentricall_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp">
 
@@ -150,8 +167,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@android:color/white"
             app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@android:color/white"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxStrokeColor="@color/sentricall_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp">
 
@@ -166,9 +188,10 @@
                 android:fontFamily="sans-serif" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Signup button -->
-        <Button
+        <!-- Signup button (rounded) -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSignup"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -177,7 +200,8 @@
             android:textColor="#022C22"
             android:textSize="16sp"
             android:backgroundTint="#22C55E"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="sans-serif-medium"
+            app:cornerRadius="12dp" />
 
         <!-- Go to login -->
         <TextView

@@ -26,12 +26,23 @@
         android:textSize="13sp"
         android:layout_marginTop="4dp" />
 
+    <!-- PIN INPUT -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilOtp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:boxStrokeColor="@color/guard_green">
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxStrokeColor="@color/sentricall_input_stroke"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
+        app:boxBackgroundColor="@android:color/transparent"
+        app:hintTextColor="#9CA3AF">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etOtp"
@@ -40,9 +51,11 @@
             android:hint="PIN code"
             android:inputType="numberPassword"
             android:textColor="@android:color/white"
-            android:textColorHint="#9CA3AF" />
+            android:textColorHint="#9CA3AF"
+            android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- ACTION BUTTONS -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,6 +70,7 @@
             android:text="Cancel"
             android:textAllCaps="false"
             android:textColor="@color/guard_subtle"
+            android:hint="* * * *"
             android:backgroundTint="@android:color/transparent" />
 
         <com.google.android.material.button.MaterialButton

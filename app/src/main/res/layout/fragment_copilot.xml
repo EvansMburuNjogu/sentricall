@@ -102,7 +102,7 @@
                             android:orientation="vertical"
                             android:layout_marginTop="12dp">
 
-                            <!-- Sample chat item -->
+                            <!-- Sample chat item (used as design reference; hidden in code) -->
                             <LinearLayout
                                 android:id="@+id/itemChatSample"
                                 android:layout_width="match_parent"
@@ -197,7 +197,7 @@
                             android:orientation="vertical"
                             android:layout_marginTop="12dp">
 
-                            <!-- Sample session item -->
+                            <!-- Sample session item (for design, can be replaced later) -->
                             <LinearLayout
                                 android:id="@+id/itemSessionSample"
                                 android:layout_width="match_parent"
@@ -255,5 +255,14 @@
         </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
+
+    <!-- 🔄 Simple centered loader (used while fetching chats/sessions) -->
+    <ProgressBar
+        android:id="@+id/progressLoading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

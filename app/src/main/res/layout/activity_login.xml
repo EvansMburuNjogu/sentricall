@@ -66,7 +66,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundColor="@android:color/transparent"
-            app:boxStrokeColor="#FFFFFFFF"
+            app:boxStrokeColor="@color/sentricall_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="@android:color/white">
@@ -95,10 +95,11 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundColor="@android:color/transparent"
-            app:boxStrokeColor="#FFFFFFFF"
+            app:boxStrokeColor="@color/sentricall_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
             app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@android:color/white"
             app:hintTextColor="@android:color/white">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -112,9 +113,10 @@
                 android:fontFamily="sans-serif" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Login button -->
-        <Button
+        <!-- Login button (rounded) -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:text="Login"
@@ -122,7 +124,8 @@
             android:textSize="16sp"
             android:textColor="#022C22"
             android:fontFamily="sans-serif-medium"
-            android:backgroundTint="#22C55E" />
+            android:backgroundTint="#22C55E"
+            app:cornerRadius="12dp" />
 
         <!-- Signup redirect text -->
         <TextView
